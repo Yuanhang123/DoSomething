@@ -29,7 +29,6 @@ bool PaserKey(stKEY *key)
 
 
 }
-0x8012
 
 void key_polling()
 {
