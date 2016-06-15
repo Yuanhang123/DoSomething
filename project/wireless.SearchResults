@@ -1,3 +1,0 @@
----- A7302_init Matches (2 in 2 files) ----
-A7201.h (e:\code\msp430\wireless_doorbell_g2xx\libraries):extern void A7302_init(void);
-Main.c:	A7302_init();
