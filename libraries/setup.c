@@ -2,10 +2,71 @@
 
 UINT8 work_sta = IDLE;
 UINT8 RxCMD[4] ={0};
-void cmd_save()
+
+void match_save(UINT8 MusicIndex,UINT8 *MatchVal)
 {
+	UINT8 TempData[64] = {0};
+	UINT8 index = 0;
+	read_SegC(TempData);
+	
+	while(1)
+	{
+		if(TempData[index] & 0x80)
+		{
+			index +=SEG_LEN;
+			if(index > (64 - SEG_LEN))
+			{
+				index = 0;
+				break;
+			}
+		} 
+		else 
+		{
+			break;
+		}
+	}
+  
+	TempData[index] = MusicIndex | 0x80;
+	for (int i=0; i<4; i++)
+	{
+	  TempData[++index] = MatchVal[i]
+	}
+	break;
+
+	write_SegC(TempData)
 
 }
+void match_clean(UINT8 *MatchVal)
+{
+	UINT8 TempData[64] = {0};
+	UINT8 index = 1;
+	read_SegC(TempData);
+	
+	while(1)
+	{	
+		for (int i=0; i<4; i++)
+		{
+		  if(TempData[index] = MatchVal[i])
+		  {
+		  	index++;
+			continue;
+		  }
+		  else
+		  {
+		  	break;	
+		  }
+		}
+		if(4 == i)
+		{
+			;
+		}
+
+	}
+	write_SegC(TempData)
+
+}
+
+
 
 void setup_normal()
 {
@@ -61,7 +122,7 @@ void work_main()
 {
 	//static UINT8 setup_sta = IDLE;
 	setup_normal();
-	swith (work_sta)
+	switch (work_sta)
 	{
 		case IDLE:
 		case CLEAN:
@@ -70,7 +131,7 @@ void work_main()
 		case CONNECT:
 			if(rx_data(RxCMD))
 			{
-				cmd_save();
+				match_save(RxCMD);
 				work_sta = IDLE;
 			}
 			break;

@@ -16,7 +16,7 @@ enum setup_status
 	CLEAN,
 }
 
-
+#define		SEG_LEN		5
 
 #endif
 
