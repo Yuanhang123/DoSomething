@@ -1,144 +1,99 @@
 #include "io430.h"
 #include <stdint.h>
-#include "kt403.h"
-#include "a7201.h"
+
+#include "a7339.h"
 #include "common.h"
-#include "Ta_uart.h"
+//#include "Ta_uart.h"
+#define MSP430_F149
 
-void key_init(void);
-void receiver_HW_test();
-void uart1_init(void);
-void send_cmd();
+#define     KEY_IO      BIT3 //p1.3
 
-#define		LED     		BIT0
-#define		IO_HW_CE		BIT1
-#define		IO_HW_S 		BIT0
-#define		IO_HW_AFSK		BIT5
-#define		IO_HW_BAND		BIT4
-int rx_data();
-extern unsigned int   BitErrors;
-int main( void )
+#define     LED_IO      BIT6 //p1.6
+#define     LED_ON()    (P1OUT &= ~LED_IO)
+#define     LED_OFF()   (P1OUT |= LED_IO)
+void USART_Init(void)
 {
-    WDTCTL = WDTPW + WDTHOLD;               // Stop watchdog timer
-    
-    if (CALBC1_1MHZ==0xFF)					// If calibration constants erased
-    {											
-      while(1);                             // do not load, trap CPU!!	
-    }
-    DCOCTL = 0;                             // Select lowest DCOx and MODx settings
-    BCSCTL1 = CALBC1_1MHZ;
-    DCOCTL = CALDCO_1MHZ;
-
-   // uart1_init();
-   TimerA_UART_init();
-    //receiver_HW_test();
-    //kt403_init();
-    //key_init();
-
-	A7201_init();
-	ReceiveData();
-    P1DIR |= LED;
-    while(1)
-    {
-
-		rxBuffer = rx_data();
-		
-        for(int i= 0;i<BitErrors;i++)
-        {
-	        P1OUT |= LED;
-	        delay_ms(500);
-	        P1OUT &= ~LED;
-	        delay_ms(500);
-			TimerA_UART_tx(rxBuffer);
-        }
-        BitErrors = 0;
-		
-		key_polling();
-    	work_main();
-	 	delay_ms(10);
-    
-    }
-  //return 0;
-}
-
-void uart1_init(void)
-{
-
-    P1SEL = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
-    P1SEL2 = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
-    UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-    UCA0BR0 = 104;                            // 1MHz 9600
-    UCA0BR1 = 0;                              // 1MHz 9600
-    UCA0MCTL = UCBRS0;                        // Modulation UCBRSx = 1
-    UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-  
-  //IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
-
- // __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
+  P3SEL |= 0x30;                            // P3.4,5 = USART0 TXD/RXD
+  ME1 |= UTXE0 + URXE0;                     // Enable USART0 TXD/RXD
+  UCTL0 |= CHAR;                            // 8-bit character
+  UTCTL0 |= SSEL0;                          // UCLK = ACLK
+  UBR00 = 0x03;                             // 32k/9600 - 3.41
+  UBR10 = 0x00;                             //
+  UMCTL0 = 0x4A;                            // Modulation
+  UCTL0 &= ~SWRST;                          // Initialize USART state machine
+   // IE1 |= URXIE0;                            // ???????§Ø? 
 }
 
 void USART_SendByte(uint8_t ch)
 {
-
-    while (!(IFG2 & UCA0TXIFG));         // USCI_A0 TX   
-    UCA0TXBUF = ch;
-   // while (!(IFG1 & UTXIFG0));                // TX???????§µ?       
-}
-const unsigned char  PN9_TAB_t[]=
-{
-    0xFF,0x83,0xDF,0x17,0x32,0x09,0x4E,0xD1,
-    0xE7,0xCD,0x8A,0x91,0xC6,0xD5,0xC4,0xC4,
-    0x40,0x21,0x18,0x4E,0x55,0x86,0xF4,0xDC,
-    0x8A,0x15,0xA7,0xEC,0x92,0xDF,0x93,0x53,
-    0x30,0x18,0xCA,0x34,0xBF,0xA2,0xC7,0x59,
-    0x67,0x8F,0xBA,0x0D,0x6D,0xD8,0x2D,0x7D,
-    0x54,0x0A,0x57,0x97,0x70,0x39,0xD2,0x7A,
-    0xEA,0x24,0x33,0x85,0xED,0x9A,0x1D,0xE0
-};
-
-const unsigned char  PREMABLE_CODE_t[] =
-{
-    0xAA,0xAA,0xAA,0xC0,0xAA,0xAA,0xAA,0xC0
-};
-
-const unsigned char  ID_CODE_t[] =
-{
-    0x76,0xC3,0x5A,0x6B
-};
-
-void send_cmd()
-{
-    int DataIndex =0;
-    for(DataIndex = 0;DataIndex < 8;DataIndex++)
-    {
-        USART_SendByte(PREMABLE_CODE_t[ DataIndex ]);
-    }
-    for(DataIndex = 0;DataIndex < 4;DataIndex++)
-    {
-        USART_SendByte(ID_CODE_t[ DataIndex ]);
-    }
-    for(DataIndex = 0;DataIndex < 64;DataIndex++)
-    {
-        USART_SendByte(PN9_TAB_t[ DataIndex ]);
-    }
-
+    TXBUF0 = ch;
+    while (!(IFG1 & UTXIFG0));                // TX???????§µ?       
 }
 
-
-void receiver_HW_test()
+int main( void )
 {
-    P2DIR |=  IO_HW_CE + IO_HW_S;
-    P1DIR |=  IO_HW_AFSK + IO_HW_BAND + LED;
-    
-    P2OUT &= ~(IO_HW_CE + IO_HW_S);
-    P1OUT |=  IO_HW_AFSK + IO_HW_BAND;
-    delay_ms(50);
-    /*
-    for(;;)
-    {P2OUT |= IO_HW_CE;
-        P1OUT |= LED;
-        delay_ms(500);
-        P1OUT &= ~LED;
-        delay_ms(500);
+    WDTCTL = WDTPW + WDTHOLD;               // Stop watchdog timer
+  /*  
+    if (CALBC1_1MHZ==0xFF)					// If calibration constants erased
+    {											
+      while(1);                             // do not load, trap CPU!!	
     }*/
+   // DCOCTL = 0;                             // Select lowest DCOx and MODx settings
+  //  BCSCTL1 = CALBC1_1MHZ;
+   // DCOCTL = CALDCO_1MHZ;
+
+	//TimerA_UART_init();
+    P1DIR |= LED_IO;
+	LED_OFF();
+	USART_Init();
+  /*  
+   // P1DIR &= ~KEY_IO;                            // Set P1.0 to output direction
+    P1IE |= KEY_IO;                             // P1.4 interrupt enabled
+    P1IES |= KEY_IO;                            // P1.4 Hi/lo edge
+    P1IFG &= ~KEY_IO;                           // P1.4 IFG cleared
+*/
+  //__bis_SR_register(LPM1_bits + GIE);       // Enter LPM4 w/interrupt
+	P1DIR &= ~BIT3; //f149 key
+	USART_SendByte('s');
+    while(1)
+    {
+
+        if(!(P1IN&BIT3))
+            {
+                delay_ms(50);
+                if(!(P1IN&BIT3))
+                {
+               		 USART_SendByte('a');
+                	LED_ON();
+					InitRF_M(); //init RF
+					WriteFIFO();	//write data to TX FIFO
+					StrobeCMD(CMD_TX);
+					delay_us(10);//Delay10us(1);
+					while(GIO1);		//wait transmit completed
+					delay_ms(500);
+					LED_OFF();
+
+                    
+                }
+            }
+
+    }
+}
+
+// Port 1 interrupt service routine
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector=PORT1_VECTOR
+__interrupt void Port_1(void)
+#elif defined(__GNUC__)
+void __attribute__ ((interrupt(PORT1_VECTOR))) Port_1 (void)
+#else
+#error Compiler not supported!
+#endif
+{
+    if(P1IFG & KEY_IO)
+    {
+        P1IFG &= ~KEY_IO;                           // IFG cleared
+        LED_ON();
+        __bic_SR_register_on_exit(LPM1_bits);   // Clear LPM4 bits from 0(SR)
+    }
 }
