@@ -214,7 +214,7 @@ void ReceiveData(void)
         delay_ms(10);
 		SPI_CE_H();
         Reg1_L &= ~CE_L;	//[0]: Active mode.[1]: Shut down mode (default).
-        Reg1_L &= ~FASK_L;//bFASK = ASK;  //for ASK Mode, Promise AGC working
+        //Reg1_L &= ~FASK_L;//bFASK = ASK;  //for ASK Mode, Promise AGC working
         SetRF();
         //REN_1 = 1;
      //   ES1 = 1;        // start UART1 interrupt
@@ -239,8 +239,8 @@ void A7201_init(void)
     Reg1_L = 0xA9;          // RX, FSK, HiBand, Clock out disable, Up side band, TX power max, AGC enable
     
 	Reg1_L &= (~BAND_L);	//HI_BAND	// HI_BAND = 434MHz band, LO_BAND = 315MHz band
-	Reg1_L &= ~FASK_L;	//FSK	//1:FSK or 0 ASK
-	Reg1_L &= ~IFB0_L;	//IF filter bandwidth selection[mid. (ASK = 250KHz, FSK = 150KHz)]
+	Reg1_L |= FASK_L;	//FSK	//1:FSK or 0 ASK
+	Reg1_L |= IFB0_L;	//IF filter bandwidth selection[mid. (ASK = 250KHz, FSK = 150KHz)]
 	Reg1_H |= IFB1_H;
 
 	SpiWrite ( 0xFA, 0x32 ); // For Power On(Initial)

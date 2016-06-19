@@ -8,9 +8,9 @@
 
 #define     KEY_IO      BIT3 //p1.3
 
-#define     LED_IO      BIT6 //p1.6
-#define     LED_ON()    (P1OUT &= ~LED_IO)
-#define     LED_OFF()   (P1OUT |= LED_IO)
+#define     LED_IO      BIT7 //p1.6
+#define     LED_ON()    (P2OUT &= ~LED_IO)
+#define     LED_OFF()   (P2OUT |= LED_IO)
 void USART_Init(void)
 {
   P3SEL |= 0x30;                            // P3.4,5 = USART0 TXD/RXD
@@ -29,7 +29,12 @@ void USART_SendByte(uint8_t ch)
     TXBUF0 = ch;
     while (!(IFG1 & UTXIFG0));                // TX???????У?       
 }
-
+void UART_print(char *string)
+{
+    while (*string) {
+        USART_SendByte(*string++);
+    }
+}
 int main( void )
 {
     WDTCTL = WDTPW + WDTHOLD;               // Stop watchdog timer
@@ -41,41 +46,46 @@ int main( void )
    // DCOCTL = 0;                             // Select lowest DCOx and MODx settings
   //  BCSCTL1 = CALBC1_1MHZ;
    // DCOCTL = CALDCO_1MHZ;
-
-	//TimerA_UART_init();
-    P1DIR |= LED_IO;
-	LED_OFF();
-	USART_Init();
-  /*  
-   // P1DIR &= ~KEY_IO;                            // Set P1.0 to output direction
-    P1IE |= KEY_IO;                             // P1.4 interrupt enabled
-    P1IES |= KEY_IO;                            // P1.4 Hi/lo edge
-    P1IFG &= ~KEY_IO;                           // P1.4 IFG cleared
-*/
-  //__bis_SR_register(LPM1_bits + GIE);       // Enter LPM4 w/interrupt
-	P1DIR &= ~BIT3; //f149 key
-	USART_SendByte('s');
-    while(1)
+    /*------选择系统主时钟为8MHz-------*/
+    BCSCTL1 &= ~XT2OFF;                 //打开XT2高频晶体振荡器
+    do
     {
-
+        IFG1 &= ~OFIFG;                 //清除晶振失败标志
+        for (int i = 0xFF; i > 0; i--);     //等待8MHz晶体起振
+    }
+    while ((IFG1 & OFIFG));             //晶振失效标志仍然存在？
+    BCSCTL2 |= SELM_2 + SELS;           //MCLK和SMCLK选择高频晶振
+    P2DIR |= LED_IO;
+	USART_Init();
+    UART_print("uart OK");
+	LED_OFF();
+	P1DIR &= ~BIT3; //f149 key
+	InitRF_M(); //init RF
+	while(1)
+    {
+/*
         if(!(P1IN&BIT3))
-            {
+        {
                 delay_ms(50);
+                
                 if(!(P1IN&BIT3))
-                {
-               		 USART_SendByte('a');
-                	LED_ON();
-					InitRF_M(); //init RF
-					WriteFIFO();	//write data to TX FIFO
-					StrobeCMD(CMD_TX);
-					delay_us(10);//Delay10us(1);
-					while(GIO1);		//wait transmit completed
-					delay_ms(500);
-					LED_OFF();
+                {*/
+       		LED_ON();
+			WriteFIFO();	//write data to TX FIFO
+			StrobeCMD(CMD_TX);
+			delay_us(10);
+			//while(GIO1);		//wait transmit completed
 
+			delay_ms(500);
+			LED_OFF();
+			dump_a7339reg();
+			delay_ms(1000);
+
+/*
                     
                 }
-            }
+          }
+*/
 
     }
 }
