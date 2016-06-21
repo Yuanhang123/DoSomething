@@ -9,12 +9,12 @@
 **  I/O Declaration
 *********************************************************************/
 
-#define		SPI_CLK_IO		BIT6
+#define		SPI_CLK_IO		BIT4
 #define		SPI_DATA_IO		BIT5	
-#define		SPI_SCS_IO		BIT0 
+#define		SPI_SCS_IO		BIT3 
 
 //#define		CKO_IO			BIT1	
-#define		GIO2_IO			BIT1
+#define		GIO2_IO			BIT6
 
 
 #define		SPI_CLK_L()			(P1OUT &= ~SPI_CLK_IO)
@@ -31,7 +31,7 @@
 
 #define		SPI_DATA			(P1IN & SPI_DATA_IO)
 
-#define		GIO1				(P1IN & GIO1_IO)
+#define		GIO2				(P1IN & GIO2_IO)
 
 #define		SPI_delay(t)		Delay10us(t)//((void)0)
 

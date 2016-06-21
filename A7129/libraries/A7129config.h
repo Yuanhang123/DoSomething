@@ -19,53 +19,57 @@
 
 #ifdef DR_10Kbps_50KIFBW
 
-const Uint16 A7129Config[]=        //433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
+
+/*********************************************************************
+**  A7129 Config
+*********************************************************************/
+const UINT16 A7129Config[]=		//433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
 {
-    0x0823,     //SYSTEM CLOCK register,
-    0x0A21,     //PLL1 register,
-    0xDA05,     //PLL2 register,    433.301MHz
-    0x0000,     //PLL3 register,
-    0x0E20,     //PLL4 register,
-    0x0024,     //PLL5 register,
-    0x0000,     //PLL6 register,
-    0x0011,     //CRYSTAL register,
-    0x0000,     //PAGEA,
-    0x0000,     //PAGEB,
-    0x18D0,     //RX1 register,     IFBW=50KHz  
-    0x7009,     //RX2 register,     by preamble
-    0x4000,     //ADC register,     
-    0x0800,     //PIN CONTROL register,     Use Strobe CMD
-    0x4C45,     //CALIBRATION register,
-    0x20C0      //MODE CONTROL register,    Use FIFO mode
+	0x0823,		//SYSTEM CLOCK register,
+	0x0A21,		//PLL1 register,
+	0xDA05,		//PLL2 register,	433.301MHz
+	0x0000,		//PLL3 register,
+	0x0A20,		//PLL4 register,
+	0x0024,		//PLL5 register,
+	0x0000,		//PLL6 register,
+	0x0011,		//CRYSTAL register,
+	0x0000,		//PAGEA,
+	0x0000,		//PAGEB,
+	0x18D0,		//RX1 register, 	IFBW=50KHz	
+	0x7009,		//RX2 register, 	by preamble
+	0x4000,		//ADC register,	   	
+	0x0800,		//PIN CONTROL register,		Use Strobe CMD
+	0x4C45,		//CALIBRATION register,
+	0x20C0		//MODE CONTROL register, 	Use FIFO mode
 };
 
-const Uint16 A7129Config_PageA[]=   //433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageA[]=   //433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
 {
-    0xF606,     //TX1 register,     Fdev = 18.75kHz
-    0x0000,     //WOR1 register,
-    0xF800,     //WOR2 register,
-    0x1907,     //RFI register,     Enable Tx Ramp up/down  
-    0x9B70,     //PM register,      CST=1
-    0x0302,     //RTH register,
-    0x400F,     //AGC1 register,    
-    0x0AC0,     //AGC2 register, 
-    0x0045,     //GIO register,     GIO2=WTR, GIO1=FSYNC
-    0xD181,     //CKO register
-    0x0004,     //VCB register,
-    0x0A21,     //CHG1 register,    430MHz
-    0x0022,     //CHG2 register,    435MHz
-    0x003F,     //FIFO register,    FEP=63+1=64bytes
-    0x1507,     //CODE register,    Preamble=4bytes, ID=4bytes
-    0x0000      //WCAL register,
+	0xF606,		//TX1 register, 	Fdev = 18.75kHz
+	0x0000,		//WOR1 register,
+	0xF800,		//WOR2 register,
+	0x1107,		//RFI register, 	Enable Tx Ramp up/down  
+	0x8170,		//PM register,		CST=1
+	0x0302,		//RTH register,
+	0x400F,		//AGC1 register,	
+	0x0AC0,		//AGC2 register, 
+	0x0045,		//GIO register, 	GIO2=WTR, GIO1=FSYNC
+	0xD181,		//CKO register
+	0x0004,		//VCB register,
+	0x0A21,		//CHG1 register, 	430MHz
+	0x0022,		//CHG2 register, 	435MHz
+	0x003F,		//FIFO register, 	FEP=63+1=64bytes
+	0x1507,		//CODE register, 	Preamble=4bytes, ID=4bytes
+	0x0000		//WCAL register,
 };
 
-const Uint16 A7129Config_PageB[]=   //433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageB[]=   //433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
 {
-    0x0337,     //TX2 register,
-    0x8200,     //IF1 register,     Enable Auto-IF, IF=100KHz
-    0x0000,     //IF2 register,
-    0x0000,     //ACK register,
-    0x0000      //ART register,
+	0x0337,		//TX2 register,
+	0x8200,		//IF1 register, 	Enable Auto-IF, IF=100KHz
+	0x0000,		//IF2 register,
+	0x0000,		//ACK register,
+	0x0000		//ART register,
 };
 
 #endif
@@ -73,7 +77,7 @@ const Uint16 A7129Config_PageB[]=   //433MHz, 10kbps (IFBW = 50KHz, Fdev = 18.75
 
 #ifdef DR_10Kbps_100KIFBW
 
-const Uint16 A7129Config[]=        //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
+const UINT16 A7129Config[]=        //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
 {
     0x1221,     //SYSTEM CLOCK register,
     0x0A21,     //PLL1 register,
@@ -93,7 +97,7 @@ const Uint16 A7129Config[]=        //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5K
     0x20C0      //MODE CONTROL register,    Use FIFO mode
 };
 
-const Uint16 A7129Config_PageA[]=   //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageA[]=   //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
 {
     0xF706,     //TX1 register,     Fdev = 37.5kHz
     0x0000,     //WOR1 register,
@@ -113,7 +117,7 @@ const Uint16 A7129Config_PageA[]=   //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5
     0x0000      //WCAL register,
 };
 
-const Uint16 A7129Config_PageB[]=   //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageB[]=   //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
 {
     0x0337,     //TX2 register,
     0x8400,     //IF1 register,     Enable Auto-IF, IF=200KHz
@@ -127,7 +131,7 @@ const Uint16 A7129Config_PageB[]=   //433MHz, 10kbps (IFBW = 100KHz, Fdev = 37.5
 
 #ifdef DR_50Kbps_50KIFBW
 
-const Uint16 A7129Config[]=        //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7129Config[]=        //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
 {
     0x0023,     //SYSTEM CLOCK register,
     0x0A21,     //PLL1 register,
@@ -147,7 +151,7 @@ const Uint16 A7129Config[]=        //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75K
     0x20C0      //MODE CONTROL register,    Use FIFO mode
 };
 
-const Uint16 A7129Config_PageA[]=   //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageA[]=   //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
 {
     0xF606,     //TX1 register,     Fdev = 18.75kHz
     0x0000,     //WOR1 register,
@@ -167,7 +171,7 @@ const Uint16 A7129Config_PageA[]=   //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75
     0x0000      //WCAL register,
 };
 
-const Uint16 A7129Config_PageB[]=   //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageB[]=   //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75KHz), Crystal=12.8MHz
 {
     0x0337,     //TX2 register,
     0x8200,     //IF1 register,     Enable Auto-IF, IF=100KHz
@@ -181,7 +185,7 @@ const Uint16 A7129Config_PageB[]=   //433MHz, 50kbps (IFBW = 50KHz, Fdev = 18.75
 
 #ifdef DR_100Kbps_100KIFBW
 
-const Uint16 A7129Config[]=        //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
+const UINT16 A7129Config[]=        //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
 {
     0x0021,     //SYSTEM CLOCK register,
     0x0A21,     //PLL1 register,
@@ -201,7 +205,7 @@ const Uint16 A7129Config[]=        //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5
     0x20C0      //MODE CONTROL register,    Use FIFO mode
 };
 
-const Uint16 A7129Config_PageA[]=   //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageA[]=   //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
 {
     0xF706,     //TX1 register,     Fdev = 37.5kHz
     0x0000,     //WOR1 register,
@@ -221,7 +225,7 @@ const Uint16 A7129Config_PageA[]=   //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.
     0x0000      //WCAL register,
 };
 
-const Uint16 A7129Config_PageB[]=   //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
+const UINT16 A7129Config_PageB[]=   //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.5KHz), Crystal=12.8MHz
 {
     0x0337,     //TX2 register,
     0x8400,     //IF1 register,     Enable Auto-IF, IF=200KHz
@@ -236,7 +240,7 @@ const Uint16 A7129Config_PageB[]=   //433MHz, 100kbps (IFBW = 100KHz, Fdev = 37.
 
 #ifdef DR_150Kbps_150KIFBW
 
-const Uint16 A7129Config[]=        //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.25KHz), Crystal=19.2MHz
+const UINT16 A7129Config[]=        //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.25KHz), Crystal=19.2MHz
 {
     0x0021,     //SYSTEM CLOCK register,
     0x0A16,     //PLL1 register,
@@ -256,7 +260,7 @@ const Uint16 A7129Config[]=        //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.2
     0x20C0      //MODE CONTROL register,    Use FIFO mode
 };
 
-const Uint16 A7129Config_PageA[]=   //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.25KHz), Crystal=19.2MHz
+const UINT16 A7129Config_PageA[]=   //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.25KHz), Crystal=19.2MHz
 {
     0xF706,     //TX1 register,     Fdev = 56.25kHz
     0x0000,     //WOR1 register,
@@ -276,7 +280,7 @@ const Uint16 A7129Config_PageA[]=   //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.
     0x0000      //WCAL register,
 };
 
-const Uint16 A7129Config_PageB[]=   //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.25KHz), Crystal=19.2MHz
+const UINT16 A7129Config_PageB[]=   //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.25KHz), Crystal=19.2MHz
 {
     0x8337,     //TX2 register,
     0x8400,     //IF1 register,     Enable Auto-IF, IF=300KHz
@@ -290,7 +294,7 @@ const Uint16 A7129Config_PageB[]=   //433MHz, 150kbps (IFBW = 150KHz, Fdev = 56.
 
 #ifdef DR_250Kbps_250KIFBW
 
-const Uint16 A7129Config[]=        //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.75KHz), Crystal=16MHz
+const UINT16 A7129Config[]=        //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.75KHz), Crystal=16MHz
 {
     0x0020,     //SYSTEM CLOCK register,
     0x0A1B,     //PLL1 register,
@@ -310,7 +314,7 @@ const Uint16 A7129Config[]=        //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.7
     0x20C0      //MODE CONTROL register,    Use FIFO mode
 };
 
-const Uint16 A7129Config_PageA[]=   //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.75KHz), Crystal=16MHz
+const UINT16 A7129Config_PageA[]=   //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.75KHz), Crystal=16MHz
 {
     0xF530,     //TX1 register,     Fdev = 93.75kHz
     0x0000,     //WOR1 register,
@@ -330,7 +334,7 @@ const Uint16 A7129Config_PageA[]=   //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.
     0x0000      //WCAL register,
 };
 
-const Uint16 A7129Config_PageB[]=   //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.75KHz), Crystal=16MHz
+const UINT16 A7129Config_PageB[]=   //433MHz, 250kbps (IFBW = 250KHz, Fdev = 93.75KHz), Crystal=16MHz
 {
     0x0337,     //TX2 register,
     0x8800,     //IF1 register,     Enable Auto-IF, IF=500KHz

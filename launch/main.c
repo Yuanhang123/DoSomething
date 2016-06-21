@@ -58,16 +58,17 @@ int main( void )
 	while(1)
     {
 
-   		LED_ON();
+   		//LED_ON();
 		WriteFIFO();	//write data to TX FIFO
 		StrobeCMD(CMD_TX);
 		delay_us(10);
 		while(GIO1);		//wait transmit completed
-
 		delay_ms(500);
-		LED_OFF();
+		//LED_OFF();
 		//dump_a7339reg();
 		delay_ms(1000);
+        delay_ms(1000);
+
 
     }
 }

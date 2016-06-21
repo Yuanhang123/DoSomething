@@ -1,5 +1,5 @@
 #include "io430.h"
-#include "a7129.h"
+#include "A7129.h"
 #include "A7129config.h"
 #include "Ta_uart.h"
 
@@ -44,9 +44,9 @@ void Delay10us(UINT8 n)
 }
 void SPI_IO_Init(void)
 {
-	P2DIR |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
-	P2DIR &=	~GIO1_IO;
-	P2OUT |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
+	P1DIR |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
+	P1DIR &=	~GIO2_IO;
+	P1OUT |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
    //CS_1;
 	SPI_CLK_L();
 	delay_ms(1);
@@ -237,6 +237,61 @@ UINT16 A7129_ReadPageB(UINT8 address)
     return tmp;
 }
 
+/************************************************************************
+**  WriteID
+************************************************************************/
+UINT8 A7129_WriteID(void)
+{
+	UINT8 i;
+	UINT8 d1, d2, d3, d4;
+
+	SPI_SCS_L();//SCS=0;
+	ByteSend(CMD_ID_W);
+	for(i=0; i<4; i++)
+		ByteSend(ID_Tab[i]);
+	SPI_SCS_H();//SCS=1;
+
+	SPI_SCS_L();//SCS=0;
+	ByteSend(CMD_ID_R);
+	d1=ByteRead();
+	d2=ByteRead();
+	d3=ByteRead();
+	d4=ByteRead();
+	SPI_SCS_H();//SCS=1;
+	
+  if((d1!=ID_Tab[0]) || (d2!=ID_Tab[1]) || (d3!=ID_Tab[2]) || (d4!=ID_Tab[3]))
+  {
+      return 1;
+  }
+  return 0;
+}
+
+
+/*********************************************************************
+** entry_deep_sleep_mode
+*********************************************************************/
+void entry_deep_sleep_mode(void)
+{
+    StrobeCMD(CMD_RF_RST);              //RF reset
+    A7129_WriteReg(PIN_REG, A7129Config[PIN_REG] | 0x0800);             //SCMDS=1
+    A7129_WritePageA(PM_PAGEA, A7129Config_PageA[PM_PAGEA] | 0x0010);   //QDS=1
+    StrobeCMD(CMD_SLEEP);               //entry sleep mode
+    delay_us(600);                      //delay 600us for VDD_A shutdown, C load=0.1uF
+    StrobeCMD(CMD_DEEP_SLEEP);          //entry deep sleep mode
+    delay_us(200);                      //delay 200us for VDD_D shutdown, C load=0.1uF
+}
+
+/*********************************************************************
+** wake_up_from_deep_sleep_mode
+*********************************************************************/
+void wake_up_from_deep_sleep_mode(void)
+{
+    StrobeCMD(CMD_STBY);    //wake up
+    delay_ms(2);            //delay 2ms for VDD_D stabilized
+    //InitRF();
+}
+
+
 /*********************************************************************
 ** A7129_POR
 *********************************************************************/
@@ -297,33 +352,6 @@ UINT8 A7129_Config(void)
     return 0;
 }
 
-/************************************************************************
-**  WriteID
-************************************************************************/
-void A7129_WriteID(void)
-{
-	UINT8 i;
-	UINT8 d1, d2, d3, d4;
-
-	SPI_SCS_L();//SCS=0;
-	ByteSend(CMD_ID_W);
-	for(i=0; i<4; i++)
-		ByteSend(ID_Tab[i]);
-	SPI_SCS_H();//SCS=1;
-
-	SPI_SCS_L();//SCS=0;
-	ByteSend(CMD_ID_R);
-	d1=ByteRead();
-	d2=ByteRead();
-	d3=ByteRead();
-	d4=ByteRead();
-	SPI_SCS_H();//SCS=1;
-	
-  if((d1!=ID_Tab[0]) || (d2!=ID_Tab[1]) || (d3!=ID_Tab[2]) || (d4!=ID_Tab[3]))
-  {
-      return 1;
-  }
-}
 
 /*********************************************************************
 ** A7129_Cal
@@ -436,7 +464,7 @@ void RxPacket(void)
     for(i=0; i<64; i++)
     {
         recv = tmpbuf[i];
-		TimerA_UART_tx(recv);
+		//TimerA_UART_tx(recv);
         tmp = recv ^ PN9_Tab[i];
         if(tmp!=0)
         {
@@ -444,7 +472,7 @@ void RxPacket(void)
             Err_BitCnt += (BitCount_Tab[tmp>>4] + BitCount_Tab[tmp & 0x0F]);
         }
     }
-	TimerA_UART_tx(Err_BitCnt);
+	//TimerA_UART_tx(Err_BitCnt);
 }
 
 /*********************************************************************
@@ -458,29 +486,6 @@ void Err_State(void)
     while(1);
 }
 
-/*********************************************************************
-** entry_deep_sleep_mode
-*********************************************************************/
-void entry_deep_sleep_mode(void)
-{
-    StrobeCMD(CMD_RF_RST);              //RF reset
-    A7129_WriteReg(PIN_REG, A7129Config[PIN_REG] | 0x0800);             //SCMDS=1
-    A7129_WritePageA(PM_PAGEA, A7129Config_PageA[PM_PAGEA] | 0x0010);   //QDS=1
-    StrobeCMD(CMD_SLEEP);               //entry sleep mode
-    delay_us(600);                      //delay 600us for VDD_A shutdown, C load=0.1uF
-    StrobeCMD(CMD_DEEP_SLEEP);          //entry deep sleep mode
-    delay_us(200);                      //delay 200us for VDD_D shutdown, C load=0.1uF
-}
-
-/*********************************************************************
-** wake_up_from_deep_sleep_mode
-*********************************************************************/
-void wake_up_from_deep_sleep_mode(void)
-{
-    StrobeCMD(CMD_STBY);    //wake up
-    delay_ms(2);            //delay 2ms for VDD_D stabilized
-    //InitRF();
-}
 
 /*********************************************************************
 ** InitRF
@@ -488,13 +493,14 @@ void wake_up_from_deep_sleep_mode(void)
 UINT8 Init_a7129(void)
 {
     //initial pin
+    /*
     SCS = 1;
     SCK = 0;
     SDIO= 1;
     CKO = 1;
     GIO1= 1;
     GIO2= 1;
-
+*/
     delay_ms(1);            //delay 1ms for regulator stabilized
     StrobeCMD(CMD_RF_RST);  //reset A7129 chip
     delay_ms(1);
@@ -515,6 +521,7 @@ UINT8 Init_a7129(void)
 
 void InitRF(void)
 {
+    SPI_IO_Init();
 	A7129_POR();	//power on only
 	while(1)
     {

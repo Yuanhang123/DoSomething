@@ -1,9 +1,8 @@
 #include "io430.h"
 #include <stdint.h>
-#include "kt403.h"
-#include "a7201.h"
-#include "common.h"
-#include "Ta_uart.h"
+#include "libraries\a7129.h"
+#include "libraries\common.h"
+#include "libraries\Ta_uart.h"
 
 void key_init(void);
 void receiver_HW_test();
@@ -30,32 +29,23 @@ int main( void )
     DCOCTL = CALDCO_1MHZ;
 
    // uart1_init();
-   TimerA_UART_init();
+  // TimerA_UART_init();
     //receiver_HW_test();
     //kt403_init();
     //key_init();
+	//TimerA_UART_print("uart ok");
 
-	A7201_init();
-	ReceiveData();
     P1DIR |= LED;
+
+	InitRF();
     while(1)
     {
 
-		rxBuffer = rx_data();
-		
-        for(int i= 0;i<BitErrors;i++)
-        {
-	        P1OUT |= LED;
-	        delay_ms(500);
-	        P1OUT &= ~LED;
-	        delay_ms(500);
-			TimerA_UART_tx(rxBuffer);
-        }
-        BitErrors = 0;
-		
-		key_polling();
-    	work_main();
-	 	delay_ms(10);
+		RxPacket();
+		 
+		//y_polling();
+    	//rk_main();
+	 	delay_ms(500);
     
     }
   //return 0;
