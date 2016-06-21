@@ -11,6 +11,7 @@
 #define     LED_IO      BIT7 //p1.6
 #define     LED_ON()    (P2OUT &= ~LED_IO)
 #define     LED_OFF()   (P2OUT |= LED_IO)
+
 void USART_Init(void)
 {
   P3SEL |= 0x30;                            // P3.4,5 = USART0 TXD/RXD
@@ -38,15 +39,7 @@ void UART_print(char *string)
 int main( void )
 {
     WDTCTL = WDTPW + WDTHOLD;               // Stop watchdog timer
-  /*  
-    if (CALBC1_1MHZ==0xFF)					// If calibration constants erased
-    {											
-      while(1);                             // do not load, trap CPU!!	
-    }*/
-   // DCOCTL = 0;                             // Select lowest DCOx and MODx settings
-  //  BCSCTL1 = CALBC1_1MHZ;
-   // DCOCTL = CALDCO_1MHZ;
-    /*------选择系统主时钟为8MHz-------*/
+
     BCSCTL1 &= ~XT2OFF;                 //打开XT2高频晶体振荡器
     do
     {
@@ -60,32 +53,21 @@ int main( void )
     UART_print("uart OK");
 	LED_OFF();
 	P1DIR &= ~BIT3; //f149 key
+	
 	InitRF_M(); //init RF
 	while(1)
     {
-/*
-        if(!(P1IN&BIT3))
-        {
-                delay_ms(50);
-                
-                if(!(P1IN&BIT3))
-                {*/
-       		LED_ON();
-			WriteFIFO();	//write data to TX FIFO
-			StrobeCMD(CMD_TX);
-			delay_us(10);
-			//while(GIO1);		//wait transmit completed
 
-			delay_ms(500);
-			LED_OFF();
-			dump_a7339reg();
-			delay_ms(1000);
+   		LED_ON();
+		WriteFIFO();	//write data to TX FIFO
+		StrobeCMD(CMD_TX);
+		delay_us(10);
+		while(GIO1);		//wait transmit completed
 
-/*
-                    
-                }
-          }
-*/
+		delay_ms(500);
+		LED_OFF();
+		//dump_a7339reg();
+		delay_ms(1000);
 
     }
 }

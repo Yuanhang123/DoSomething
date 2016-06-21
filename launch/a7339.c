@@ -295,7 +295,7 @@ void WriteFIFO(void)
 	SPI_SCS_L();//SCS=0;
 	ByteSend(CMD_FIFO_W);	//TX FIFO write command
 	for(i=0; i <64; i++)
-		ByteSend(PN9_Tab[5]);
+		ByteSend(PN9_Tab[i]);
 	SPI_SCS_H();//SCS=1;
 }
 void Err_State(void)
@@ -435,16 +435,7 @@ void InitRF_M(void)
     delay_us(800);//Delay100us(8);			//delay 800us for crystal stabilized
     WriteID();					//write ID code
     A7339_Cal();				//VCC and VCO calibration
-    /*
-    int tmp = ReadReg(SYSTEMCLOCK_REG);
-    
-    	USART_SendByte(33);
-    USART_SendByte(tmp);
-	StrobeCMD(CMD_RF_RST);	//reset A7339 chip
-    tmp = ReadReg(SYSTEMCLOCK_REG);
-	USART_SendByte(34);
-    USART_SendByte(tmp);
-    */
+
 }
 
 void dump_a7339reg()
@@ -466,7 +457,6 @@ void dump_a7339reg()
 		USART_SendByte(data>>8);
 		USART_SendByte(data&0xff);
 	}
-	USART_SendByte(55);
 	USART_SendByte(ReadPageB(TX2_PAGEB));
 	USART_SendByte(ReadPageB(IF2_PAGEB));
 }

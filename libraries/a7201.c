@@ -208,13 +208,13 @@ void ReceiveData(void)
  //   if ( ES1 == 0 )
 //    {
         Reg1_L |= CE_L;	//[0]: Active mode.[1]: Shut down mode (default).
-		Reg1_L |= FASK_L;	//[0]: ASK.[1]: FSK (default).
+		Reg1_L &= ~FASK_L;	//[0]: ASK.[1]: FSK (default).
         SetRF();
         //Delay1ms_CNT50US( 10 );
         delay_ms(10);
 		SPI_CE_H();
         Reg1_L &= ~CE_L;	//[0]: Active mode.[1]: Shut down mode (default).
-        //Reg1_L &= ~FASK_L;//bFASK = ASK;  //for ASK Mode, Promise AGC working
+        Reg1_L |= FASK_L;//bFASK = ASK;  //for ASK Mode, Promise AGC working
         SetRF();
         //REN_1 = 1;
      //   ES1 = 1;        // start UART1 interrupt
