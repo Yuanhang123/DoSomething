@@ -472,6 +472,12 @@ void RxPacket(void)
             Err_BitCnt += (BitCount_Tab[tmp>>4] + BitCount_Tab[tmp & 0x0F]);
         }
     }
+    if(Err_BitCnt < 1)
+    {
+    LED_ON();
+    delay_ms(500);
+    LED_OFF();
+    }
 	//TimerA_UART_tx(Err_BitCnt);
 }
 
@@ -522,14 +528,14 @@ UINT8 Init_a7129(void)
 void InitRF(void)
 {
     SPI_IO_Init();
-	A7129_POR();	//power on only
+	//A7129_POR();	//power on only
 	while(1)
     {
         if(Init_a7129()) //init RF
         {
-            entry_deep_sleep_mode();
+           // entry_deep_sleep_mode();
             delay_ms(2);
-            wake_up_from_deep_sleep_mode();
+            //wake_up_from_deep_sleep_mode();
         }
         else
         {

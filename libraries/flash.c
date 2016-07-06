@@ -34,7 +34,7 @@
 //  Built with CCS Version 4.2.0 and IAR Embedded Workbench Version: 5.10
 //******************************************************************************
 
-#include <flash.h>
+#include "flash.h"
 
 // Function prototypes
 
@@ -53,7 +53,7 @@ int flash_init(void)
   }*/
 }
 
-void write_SegC (char * WriteData)
+void write_SegC(char *WriteData)
 {
   char *Flash_ptr;                          // Flash pointer
   unsigned int i;

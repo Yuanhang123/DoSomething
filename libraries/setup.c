@@ -29,11 +29,10 @@ void match_save(UINT8 MusicIndex,UINT8 *MatchVal)
 	TempData[index] = MusicIndex | 0x80;
 	for (int i=0; i<4; i++)
 	{
-	  TempData[++index] = MatchVal[i]
+	  TempData[++index] = MatchVal[i];
 	}
-	break;
 
-	write_SegC(TempData)
+	write_SegC(TempData);
 
 }
 void match_clean(UINT8 *MatchVal)
@@ -62,7 +61,7 @@ void match_clean(UINT8 *MatchVal)
 		}
 
 	}
-	write_SegC(TempData)
+	write_SegC(TempData);
 
 }
 

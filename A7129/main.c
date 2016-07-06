@@ -9,11 +9,13 @@ void receiver_HW_test();
 void uart1_init(void);
 void send_cmd();
 
-#define		LED     		BIT0
+
 #define		IO_HW_CE		BIT1
 #define		IO_HW_S 		BIT0
 #define		IO_HW_AFSK		BIT5
 #define		IO_HW_BAND		BIT4
+
+
 int rx_data();
 extern unsigned int   BitErrors;
 int main( void )
@@ -35,8 +37,8 @@ int main( void )
     //key_init();
 	//TimerA_UART_print("uart ok");
 
-    P1DIR |= LED;
-
+    P1DIR |= IO_LED;
+    LED_OFF();
 	InitRF();
     while(1)
     {
@@ -118,7 +120,7 @@ void send_cmd()
 void receiver_HW_test()
 {
     P2DIR |=  IO_HW_CE + IO_HW_S;
-    P1DIR |=  IO_HW_AFSK + IO_HW_BAND + LED;
+    P1DIR |=  IO_HW_AFSK + IO_HW_BAND + IO_LED;
     
     P2OUT &= ~(IO_HW_CE + IO_HW_S);
     P1OUT |=  IO_HW_AFSK + IO_HW_BAND;

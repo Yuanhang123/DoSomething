@@ -19,6 +19,9 @@ typedef unsigned W8 UINT8;
 
 /*********types end**********/
 
+#define		IO_LED     		BIT0
+#define     LED_ON()    (P1OUT &= ~IO_LED)
+#define     LED_OFF()   (P1OUT |= IO_LED)
 
 #define CPU_CLOCK       (1000000)
 #define delay_us(us)    __delay_cycles(CPU_CLOCK/1000000*(us))

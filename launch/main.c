@@ -57,18 +57,18 @@ int main( void )
 	InitRF_M(); //init RF
 	while(1)
     {
-
-   		//LED_ON();
-		WriteFIFO();	//write data to TX FIFO
-		StrobeCMD(CMD_TX);
-		delay_us(10);
-		while(GIO1);		//wait transmit completed
-		delay_ms(500);
-		//LED_OFF();
-		//dump_a7339reg();
-		delay_ms(1000);
-        delay_ms(1000);
-
+        if((P1IN &BIT3)==0)
+        {
+            for(int i = 0;i<3;i++){
+                //LED_ON();
+                WriteFIFO();	//write data to TX FIFO
+                StrobeCMD(CMD_TX);
+                delay_us(10);
+                while(GIO1);		//wait transmit completed
+                delay_ms(100);
+                //LED_OFF();
+            }
+        }
 
     }
 }

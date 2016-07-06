@@ -7,8 +7,8 @@
 
 int flash_init(void);
 
-void write_SegC (char value);
-void read_SegC (char * ReadData);
+void write_SegC(char value);
+void read_SegC(char * ReadData);
 
 
 #endif
