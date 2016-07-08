@@ -17,11 +17,11 @@ typedef unsigned W32 UINT32;
 typedef unsigned W16 UINT16;
 typedef unsigned W8 UINT8;
 
+#define		TRUE			1
+#define		FALSE			0
+
 /*********types end**********/
 
-#define		IO_LED     		BIT0
-#define     LED_ON()    (P1OUT &= ~IO_LED)
-#define     LED_OFF()   (P1OUT |= IO_LED)
 
 #define CPU_CLOCK       (1000000)
 #define delay_us(us)    __delay_cycles(CPU_CLOCK/1000000*(us))

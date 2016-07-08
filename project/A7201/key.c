@@ -11,20 +11,20 @@ void key_init(void)
     P1REN |=  (K1_IO | K2_IO);	//P1 pull up
 }
 
-bool PaserKey(stKEY *key)
+void PaserKey(stKEY *key)
 {
 	UINT16 key_state  = P1IN;
-	if(!(key_state & key.dKeyIO))
+	if(!(key_state & key->dKeyIO))
 	{
-		if(key.dKeyRepeat < 200)
-			key.dKeyRepeat++;
+		if(key->dKeyRepeat < 200)
+			key->dKeyRepeat++;
 	}
 	else
 	{
-		if((key.dKeyRepeat > 10) && (key.dKeyRepeat & 0x8000 == 0))
-			key.dKeyRepeat |= 0x8000;
+		if((key->dKeyRepeat > 10) && (key->dKeyRepeat & 0x8000 == 0))
+			key->dKeyRepeat |= 0x8000;
 		else
-			key.dKeyRepeat = 0;
+			key->dKeyRepeat = 0;
 	}
 
 

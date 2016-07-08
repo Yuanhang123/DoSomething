@@ -1,9 +1,13 @@
 #include "io430.h"
 #include <stdint.h>
-#include "kt403.h"
-#include "a7201.h"
-#include "common.h"
-#include "Ta_uart.h"
+#include "a7201/kt403.h"
+#include "a7201/a7201.h"
+#include "a7201/common.h"
+#include "a7201/Ta_uart.h"
+#include "a7201/a7201.h"
+#include "a7201/key.h"
+#include "a7201/work.h"
+
 
 void key_init(void);
 void receiver_HW_test();
@@ -16,7 +20,7 @@ void send_cmd();
 #define		IO_HW_AFSK		BIT5
 #define		IO_HW_BAND		BIT4
 int rx_data();
-extern unsigned int   BitErrors;
+
 int main( void )
 {
     WDTCTL = WDTPW + WDTHOLD;               // Stop watchdog timer
@@ -40,20 +44,9 @@ int main( void )
     P1DIR |= LED;
     while(1)
     {
-
-		rxBuffer = rx_data();
-		
-        for(int i= 0;i<BitErrors;i++)
-        {
-	        P1OUT |= LED;
-	        delay_ms(500);
-	        P1OUT &= ~LED;
-	        delay_ms(500);
-			TimerA_UART_tx(rxBuffer);
-        }
-        BitErrors = 0;
 		
 		key_polling();
+		setup_normal();
     	work_main();
 	 	delay_ms(10);
     
@@ -76,7 +69,7 @@ void uart1_init(void)
 
  // __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
 }
-
+/*
 void USART_SendByte(uint8_t ch)
 {
 
@@ -84,47 +77,8 @@ void USART_SendByte(uint8_t ch)
     UCA0TXBUF = ch;
    // while (!(IFG1 & UTXIFG0));                // TX???????§µ?       
 }
-const unsigned char  PN9_TAB_t[]=
-{
-    0xFF,0x83,0xDF,0x17,0x32,0x09,0x4E,0xD1,
-    0xE7,0xCD,0x8A,0x91,0xC6,0xD5,0xC4,0xC4,
-    0x40,0x21,0x18,0x4E,0x55,0x86,0xF4,0xDC,
-    0x8A,0x15,0xA7,0xEC,0x92,0xDF,0x93,0x53,
-    0x30,0x18,0xCA,0x34,0xBF,0xA2,0xC7,0x59,
-    0x67,0x8F,0xBA,0x0D,0x6D,0xD8,0x2D,0x7D,
-    0x54,0x0A,0x57,0x97,0x70,0x39,0xD2,0x7A,
-    0xEA,0x24,0x33,0x85,0xED,0x9A,0x1D,0xE0
-};
 
-const unsigned char  PREMABLE_CODE_t[] =
-{
-    0xAA,0xAA,0xAA,0xC0,0xAA,0xAA,0xAA,0xC0
-};
-
-const unsigned char  ID_CODE_t[] =
-{
-    0x76,0xC3,0x5A,0x6B
-};
-
-void send_cmd()
-{
-    int DataIndex =0;
-    for(DataIndex = 0;DataIndex < 8;DataIndex++)
-    {
-        USART_SendByte(PREMABLE_CODE_t[ DataIndex ]);
-    }
-    for(DataIndex = 0;DataIndex < 4;DataIndex++)
-    {
-        USART_SendByte(ID_CODE_t[ DataIndex ]);
-    }
-    for(DataIndex = 0;DataIndex < 64;DataIndex++)
-    {
-        USART_SendByte(PN9_TAB_t[ DataIndex ]);
-    }
-
-}
-
-
+*/
 void receiver_HW_test()
 {
     P2DIR |=  IO_HW_CE + IO_HW_S;

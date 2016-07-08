@@ -39,7 +39,7 @@
 // Function prototypes
 
 
-int flash_init(void)
+void flash_init(void)
 {
 
   FCTL2 = FWKEY + FSSEL0 + FN1;             // MCLK/3 for Flash Timing Generator
@@ -52,16 +52,21 @@ int flash_init(void)
     __no_operation();                       // SET BREAKPOINT HERE
   }*/
 }
+void clean_SegC()
+{
+	char *Flash_ptr = (char *) 0x1040;			  // Initialize Flash pointer
+	FCTL1 = FWKEY + ERASE;					  // Set Erase bit
+	FCTL3 = FWKEY;							  // Clear Lock bit
+	*Flash_ptr = 0; 						  // Dummy write to erase Flash segment
 
-void write_SegC(char *WriteData)
+}
+void write_SegC (char * WriteData)
 {
   char *Flash_ptr;                          // Flash pointer
   unsigned int i;
 
   Flash_ptr = (char *) 0x1040;              // Initialize Flash pointer
-  FCTL1 = FWKEY + ERASE;                    // Set Erase bit
-  FCTL3 = FWKEY;                            // Clear Lock bit
-  *Flash_ptr = 0;                           // Dummy write to erase Flash segment
+  clean_SegC();
 
   FCTL1 = FWKEY + WRT;                      // Set WRT bit for write operation
 
@@ -75,8 +80,9 @@ void write_SegC(char *WriteData)
 }
 void read_SegC (char * ReadData)
 {
+    char *Flash_ptrC;
 	Flash_ptrC = (char *) 0x1040;             // Initialize Flash segment C pointer
-	for (i=0; i<64; i++)
+	for (UINT8 i=0; i<64; i++)
 	{
     	*ReadData++ = *Flash_ptrC++;          // copy value segment C to segment D
   	}

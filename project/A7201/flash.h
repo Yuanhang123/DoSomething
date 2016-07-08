@@ -5,10 +5,11 @@
 #include <stdint.h>
 #include "common.h"
 
-int flash_init(void);
+void flash_init(void);
 
-void write_SegC (char value);
+void write_SegC (char * WriteData);
 void read_SegC (char * ReadData);
+void clean_SegC();
 
 
 #endif

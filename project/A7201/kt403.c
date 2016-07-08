@@ -1,7 +1,7 @@
 #include <msp430.h>
 #include <stdint.h>
 #include "kt403.h"
-#include "uart.h"
+#include "Ta_uart.h"
 
 uint8_t kt403_cmd[2][8] =
 {
