@@ -2,7 +2,6 @@
 #define _WORK_H_
 
 #include "io430.h"
-#include <stdint.h>
 #include "common.h"
 #include "key.h"
 #include "flash.h"

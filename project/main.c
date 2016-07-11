@@ -1,5 +1,4 @@
 #include "io430.h"
-#include <stdint.h>
 #include "a7201/kt403.h"
 #include "a7201/a7201.h"
 #include "a7201/common.h"
@@ -14,7 +13,6 @@ void receiver_HW_test();
 void uart1_init(void);
 void send_cmd();
 
-#define		LED     		BIT0
 #define		IO_HW_CE		BIT1
 #define		IO_HW_S 		BIT0
 #define		IO_HW_AFSK		BIT5
@@ -37,11 +35,12 @@ int main( void )
    TimerA_UART_init();
     //receiver_HW_test();
     //kt403_init();
-    //key_init();
+    key_init();
 
 	A7201_init();
 	ReceiveData();
-    P1DIR |= LED;
+    P1DIR |= LED_IO;
+    P2DIR |= BIT2;
     while(1)
     {
 		
@@ -53,7 +52,7 @@ int main( void )
     }
   //return 0;
 }
-
+/*
 void uart1_init(void)
 {
 
@@ -68,7 +67,7 @@ void uart1_init(void)
   //IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
 
  // __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
-}
+}*/
 /*
 void USART_SendByte(uint8_t ch)
 {
@@ -82,7 +81,7 @@ void USART_SendByte(uint8_t ch)
 void receiver_HW_test()
 {
     P2DIR |=  IO_HW_CE + IO_HW_S;
-    P1DIR |=  IO_HW_AFSK + IO_HW_BAND + LED;
+    P1DIR |=  IO_HW_AFSK + IO_HW_BAND + LED_IO;
     
     P2OUT &= ~(IO_HW_CE + IO_HW_S);
     P1OUT |=  IO_HW_AFSK + IO_HW_BAND;

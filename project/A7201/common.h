@@ -29,5 +29,8 @@ typedef unsigned W8 UINT8;
 
 #define	DBG()  //
 
+#define     LED_IO      BIT0
+#define     LED_OFF()    P1OUT &= ~LED_IO
+#define     LED_ON()    P1OUT |= LED_IO
 #endif /*__CPU_H*/
 

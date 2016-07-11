@@ -45,8 +45,8 @@ unsigned char  Reg1_L;
 unsigned char  bBufIndex;
 unsigned char  bDataRedly;
 
-UINT8  RxData[4];
-UINT8  RxDataBuf[4];
+UINT8  RxData[DATA_LEN];
+UINT8  RxDataBuf[DATA_BUF_LEN];
 
 const unsigned char  FREQ_TAB[2][2] =
 {   { 0x70, 0x03 },         // 433.92MHz
@@ -190,39 +190,40 @@ __interrupt void Timer_A1_ISR(void)
 {
     static UINT8 bRxBitCnt = 8;
     static UINT8 bRxData = 0;
-   	static UINT8 bRxsta = IDLE,bMatchCnt = 0,bRxIndex = 0;
+   	static UINT8 bMatchCnt = 0,bRxIndex = 0;
    	static UINT16 PreambleBit = SCCI;
-   
+   static RxDataStatus eRxsta = eIDLE;
+   P2OUT |= BIT2;
     switch (__even_in_range(TA0IV, TA0IV_TAIFG)) { // Use calculated branching
         case TA0IV_TACCR1:                        // TACCR1 CCIFG - UART RX
             
             TACCR1 += UART_TBIT;                 // Add Offset to CCRx
-           // P2OUT &= ~BIT2;
+            
             if (TACCTL1 & CAP) {                 // Capture mode = start bit edge
                 TACCTL1 &= ~CAP;                 // Switch capture to compare mode
                 TACCR1 += UART_TBIT_DIV_2;       // Point CCRx to middle of D0
             }
             else 
             {
-				switch(bRxsta) {
-					case IDLE:
+				switch(eRxsta) {
+					case eIDLE:
 						if ((TACCTL1 & SCCI) == (PreambleBit & SCCI)) { 
 							PreambleBit = ~PreambleBit;
                             
 							if(bMatchCnt++ >= MATCH_CNT) {
 								TACCR1 += UART_TBIT_BYTE;
-								bRxsta = PREAMBLE;
+								eRxsta = ePREAMBLE;
 							}
                           //  if(int data < bMatchCnt)
                            //     data = bMatchCnt;
 						} else {
 							PreambleBit = SCCI;
-							bRxsta = PREAMBLE;//TACCTL1 |= CAP; 			 // Switch compare to capture mode
+							eRxsta = ePREAMBLE;//TACCTL1 |= CAP; 			 // Switch compare to capture mode
 						}
                         TACCR1 += UART_TBIT;
 						break;
 						
-					case SYNC_OK:
+					case eSYNC_OK:
 						bRxData <<= 1;
 		                if (TACCTL1 & SCCI) {            // Get bit waiting in receive latch
 		                    bRxData |= 0x01;
@@ -235,20 +236,20 @@ __interrupt void Timer_A1_ISR(void)
 							
 							if(++bRxIndex >= DATA_LEN) {
 								bRxIndex = 0;
-                                bRxsta = IDLE;
+                                eRxsta = eIDLE;
                             }
-							if( ++bBufIndex > DATA_BUF_LEN) {
+							if( ++bBufIndex >= DATA_BUF_LEN) {
 								bBufIndex = 0;
 								bDataRedly = TRUE;
 							}
 		                }
 						break;
 						
-					case PREAMBLE:
+					case ePREAMBLE:
 						if(bMatchCnt >= MATCH_CNT)
-							bRxsta = SYNC_OK;
+							eRxsta = eSYNC_OK;
 						else
-							bRxsta = IDLE;
+							eRxsta = eIDLE;
 						bMatchCnt = 0;
 						TACCTL1 |= CAP;              // Switch compare to capture mode
 						break;
@@ -258,8 +259,9 @@ __interrupt void Timer_A1_ISR(void)
           }
      }
 	//P2OUT |= BIT2;
+     P2OUT &= ~BIT2;
 }
-#define		MATCH_OK		0xFE
+
 
 
 

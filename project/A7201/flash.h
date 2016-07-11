@@ -2,7 +2,6 @@
 #define _FLASH_H_
 
 #include "io430.h"
-#include <stdint.h>
 #include "common.h"
 
 void flash_init(void);

@@ -1,6 +1,5 @@
 #include "io430.h"
 
-#include <stdint.h>
 #include "uart.h"
 
 

@@ -2,7 +2,7 @@
 #define _A7201_H_
 
 #include "io430.h"
-#include <stdint.h>
+//#include <stdint.h>
 #include "common.h"
 
 //unsigned char  Reg1_H;
@@ -33,9 +33,18 @@
 #define		DATA2_ADDR		(8)
 #define		DATA_BUF_LEN	(12)
 
-extern UINT8  RxDataBuf[4];
+#define		MATCH_OK		0xFE
+
+typedef enum _RxDataStatus{
+	eIDLE,
+	ePREAMBLE,
+	eSYNC_OK,
+
+}RxDataStatus;
+
+extern UINT8  RxDataBuf[DATA_BUF_LEN];
 void A7201_init(void);
 void ReceiveData(void);
 UINT8 match_data(UINT8 *data_index);
-
+UINT8 compare_data(UINT8 *src,UINT8 *data);
 #endif

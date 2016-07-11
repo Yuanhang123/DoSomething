@@ -14,14 +14,21 @@ void match_save(UINT8 MusicIndex,UINT8 *MatchVal)
 	
 	while(1)
 	{
-		if(TempData[index] & 0x80)
+		if(!(TempData[index] & 0x80))
 		{
-			index +=SEG_LEN;
-			if(index > (64 - SEG_LEN))
-			{
-				index = 0;
-				break;
-			}
+            if(MATCH_OK == compare_data(&TempData[index+1],MatchVal))
+            {
+                break;
+            }
+            else
+            {
+                index += SEG_LEN;
+                if(index > (64 - SEG_LEN))
+                {
+                    index = 0;
+                    break;
+                }
+            }
 		} 
 		else 
 		{
@@ -29,7 +36,7 @@ void match_save(UINT8 MusicIndex,UINT8 *MatchVal)
 		}
 	}
   
-	TempData[index] = MusicIndex | 0x80;
+	TempData[index] = MusicIndex & 0x7F;
 	for (int i=0; i<4; i++)
 	{
 	  TempData[++index] = MatchVal[i];
@@ -46,7 +53,7 @@ UINT8 match_play(UINT8 *MatchVal,UINT8 *music_index)
 	
 	while(1)
 	{
-		if(TempData[index] & 0x80)
+		if(!(TempData[index] & 0x80))
 		{
 			for (UINT8 i=0; i<DATA_LEN; i++)
 			{
@@ -54,7 +61,7 @@ UINT8 match_play(UINT8 *MatchVal,UINT8 *music_index)
 			  {
 			  	if(i >= (DATA_LEN-1))
 				{
-					*music_index = TempData[index] & 0x80 ;
+					*music_index = TempData[index] & 0x7F ;
 					return TRUE;
 				}
 				continue;
@@ -88,6 +95,7 @@ void setup_normal()
 		if(cur_music++ >= MUSIC_MAX)
 			cur_music = 0;
 		TimerA_UART_print("next music cur_music");
+        work_sta = MATCH;
 	}
 	else if(IsShortKey(k2))
 	{
@@ -125,7 +133,10 @@ void work_main()
 			case NORMAL:
 				for(UINT8 i = 0; i<3; i++){
 					if(match_play(&RxDataBuf[DATA0_ADDR] + (i*DATA_LEN),&data_index))
-						;//kt403_send_cmd(data_index);
+                    {
+						TimerA_UART_tx(data_index);
+                        LED_ON();
+                    }
 				}
 				break;
 
@@ -137,6 +148,7 @@ void work_main()
 			default:
 				break;	
 		}
+        LED_OFF();
 	}
 }
 

@@ -16,12 +16,12 @@ void PaserKey(stKEY *key)
 	UINT16 key_state  = P1IN;
 	if(!(key_state & key->dKeyIO))
 	{
-		if(key->dKeyRepeat < 200)
+		if(key->dKeyRepeat < 50)
 			key->dKeyRepeat++;
 	}
 	else
 	{
-		if((key->dKeyRepeat > 10) && (key->dKeyRepeat & 0x8000 == 0))
+		if((key->dKeyRepeat > 10) && ((key->dKeyRepeat & 0x8000) == 0))
 			key->dKeyRepeat |= 0x8000;
 		else
 			key->dKeyRepeat = 0;
