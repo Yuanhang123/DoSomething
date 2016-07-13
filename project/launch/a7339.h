@@ -2,13 +2,36 @@
 #define _A7339_H_
 
 #include "io430.h"
-#include <stdint.h>
 #include "common.h"
 
 /*********************************************************************
 **  I/O Declaration
 *********************************************************************/
+#define		SPI_CLK_IO		BIT3
+#define		SPI_DATA_IO		BIT2	
+#define		SPI_SCS_IO		BIT4 
 
+//#define		CKO_IO			BIT1	
+#define		GIO1_IO			BIT1
+
+#define		SPI_CLK_L()			(P1OUT &= ~SPI_CLK_IO)
+#define		SPI_CLK_H()			(P1OUT |= SPI_CLK_IO)
+
+#define		SPI_DATA_L()		(P1OUT &= ~SPI_DATA_IO)
+#define		SPI_DATA_H()		(P1OUT |= SPI_DATA_IO)
+
+#define		SPI_SCS_L()			(P1OUT &= ~SPI_SCS_IO)
+#define		SPI_SCS_H()			(P1OUT |= SPI_SCS_IO)
+
+#define		SPI_DATA_OUT()		(P1DIR |= SPI_DATA_IO)
+#define		SPI_DATA_IN()		(P1DIR &= ~SPI_DATA_IO)	
+
+#define		SPI_DATA			(P1IN & SPI_DATA_IO)
+
+#define		GIO1				(P1IN & GIO1_IO)
+
+#define		SPI_delay(t)		delay_us(t)//((void)0)
+/*
 #define		SPI_CLK_IO		BIT5
 #define		SPI_DATA_IO		BIT3	
 #define		SPI_SCS_IO		BIT6 
@@ -33,7 +56,7 @@
 #define		GIO1				(P2IN & GIO1_IO)
 
 #define		SPI_delay(t)		Delay10us(t)//((void)0)
-
+*/
 /********************************************************************
 *   A7329REG.h
 *   RF Chip-A7329 Hardware Definitions

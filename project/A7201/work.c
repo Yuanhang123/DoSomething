@@ -94,27 +94,27 @@ void setup_normal()
 	{
 		if(cur_music++ >= MUSIC_MAX)
 			cur_music = 0;
-		TimerA_UART_print("next music cur_music");
+		//TimerA_UART_print("next music cur_music");
         work_sta = MATCH;
 	}
 	else if(IsShortKey(k2))
 	{
 		if(cur_music-- <= 1)
 			cur_music = MUSIC_MAX;
-		TimerA_UART_print("prev music cur_music");
+		//TimerA_UART_print("prev music cur_music");
 	}
 
 	else if(IsLongKey(k1))
 	{
 		k1.dKeyRepeat = 0;
-		TimerA_UART_print("clean mode");
+		//TimerA_UART_print("clean mode");
 		work_sta = MATCH;
 		
 	}
 	else if(IsLongKey(k2))
 	{
 		k2.dKeyRepeat = 0;
-		TimerA_UART_print("clean mode");
+		//TimerA_UART_print("clean mode");
 		clean_SegC();
 		
 	}
@@ -134,7 +134,7 @@ void work_main()
 				for(UINT8 i = 0; i<3; i++){
 					if(match_play(&RxDataBuf[DATA0_ADDR] + (i*DATA_LEN),&data_index))
                     {
-						TimerA_UART_tx(data_index);
+						//TimerA_UART_tx(data_index);
                         LED_ON();
                     }
 				}

@@ -19,27 +19,20 @@
 	UINT16			Config_PageA[16];
 	UINT16			Config_PageB[5];
 
-extern void USART_SendByte(uint8_t ch);
+extern void USART_SendByte(UINT8 ch);
 const UINT8 BitCount_Tab[16]={0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4};
-const UINT8 ID_Tab[8]={0xAA,0xAA,0xAA,0xC0,0xAA,0xAA,0xAA,0xC0};   
+const UINT8  ID_Tab[4]={0xAA,0xAA,0xAA,0xC0};   //ID code
 const UINT8 PN9_Tab[]=
-{	0xAA,0xAA,0xAA,0xC0,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,
-		0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A,0x5A
-
+{   0xAA,0xAA,0xAA,0xC0,0xFE,0xCC,0xCC,0xCC,0xCC,0xCC,0xCC,0xCC,0xCC,0x00,0x0e,0xaa,0x0F,0xFF,
+    0xAA,0xAA
 };	// This table are 64bytes PN9 pseudo random code.
 
 /*********************************************************************
 **  A7339 Config
 *********************************************************************/
-const UINT16  A7339Config[]=		//433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7339Config[]=		//433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MHz
 {
-    0x0823,   //SYSTEM CLOCK register,
+   0x0823,//0x08B3 0x0823,   //SYSTEM CLOCK register,
     0x0821,   //PLL1 register,
     0xE666,   //PLL2 register,  433.301MHz0xDA05,   
     0x0000,   //PLL3 register,
@@ -57,7 +50,7 @@ const UINT16  A7339Config[]=		//433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MH
     0x20D0    //MODE CONTROL register,  Use FIFO mode
 };
 
-const UINT16  A7339Config_PageA[]=   //433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7339Config_PageA[]=   //433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MHz
 {
     0x1606,   //TX1 register,   Fdev = 18.75kHz
     0x0000,   //WOR1 register,
@@ -72,14 +65,14 @@ const UINT16  A7339Config_PageA[]=   //433MHz, 10kbps (Fdev = 18.75KHz), Crystal
     0x00DE,   //VCB register,
     0x0A21,   //CHG1 register,  430MHz
     0x0022,   //CHG2 register,  435MHz
-    0x003F,   //FIFO register,  FEP=63+1=64bytes
+    0x0013,   //FIFO register,  FEP=63+1=64bytes
     0x1507,   //CODE register,  Preamble=4bytes, ID=4bytes
     0x0000    //WCAL register,
 };
 
-const UINT16  A7339Config_PageB[]=   //433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MHz
+const UINT16 A7339Config_PageB[]=   //433MHz, 10kbps (Fdev = 18.75KHz), Crystal=12.8MHz
 {
-	0x0337,		//TX2 register,		TDL=80us
+	0x037f,//0x0337,		//TX2 register,		TDL=80us
 	0x0000,		//Reserved,
 	0x0000,		//IF2 register,
 };
@@ -95,9 +88,9 @@ void Delay10us(UINT8 n)
 }
 void SPI_IO_Init(void)
 {
-	P2DIR |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
-	P2DIR &=	~GIO1_IO;
-	P2OUT |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
+	P1DIR |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
+	P1DIR &=	~GIO1_IO;
+	P1OUT |= SPI_DATA_IO + SPI_SCS_IO + SPI_CLK_IO;
    //CS_1;
 	SPI_CLK_L();
 	delay_ms(1);
@@ -295,7 +288,7 @@ void WriteFIFO(void)
 
 	SPI_SCS_L();//SCS=0;
 	ByteSend(CMD_FIFO_W);	//TX FIFO write command
-	for(i=0; i <64; i++)
+	for(i=0; i <20; i++)
 		ByteSend(PN9_Tab[i]);
 	SPI_SCS_H();//SCS=1;
 }
@@ -407,7 +400,7 @@ void A7339_Cal(void)
 	do{
 		tmp = ReadReg(MODE_REG);
 	}while(tmp & 0x0004);
-	
+	/*
 	//for check(VCO Band)
 	tmp = ReadReg(CALIBRATION_REG);
 	vb = (tmp >>5) & 0x07;
@@ -415,7 +408,7 @@ void A7339_Cal(void)
 	if(vbcf)
 	{
 		Err_State();
-	}
+	}*/
 }
 
 void InitRF_M(void)
@@ -424,6 +417,7 @@ void InitRF_M(void)
  
 	SPI_IO_Init();
     StrobeCMD(CMD_RF_RST);	//reset A7339 chip
+     delay_us(1800);
     A7339_Config();			//config A7339 chip
     delay_us(800);//Delay100us(8);			//delay 800us for crystal stabilized
     WriteID();					//write ID code

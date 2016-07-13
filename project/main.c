@@ -43,11 +43,13 @@ int main( void )
     P2DIR |= BIT2;
     while(1)
     {
-		
+		//LED_ON();
 		key_polling();
 		setup_normal();
     	work_main();
 	 	delay_ms(10);
+       // LED_OFF();
+       // delay_ms(1000);
     
     }
   //return 0;

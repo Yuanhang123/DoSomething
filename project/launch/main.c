@@ -1,73 +1,50 @@
 #include "io430.h"
-#include <stdint.h>
 
 #include "a7339.h"
 #include "common.h"
 //#include "Ta_uart.h"
 #define MSP430_F149
 
-#define     KEY_IO      BIT3 //p1.3
+#define     KEY_IO      BIT5 //p1.5
 
-#define     LED_IO      BIT7 //p1.6
-#define     LED_ON()    (P2OUT &= ~LED_IO)
-#define     LED_OFF()   (P2OUT |= LED_IO)
+#define     LED_IO      BIT6 //p1.6
+#define     LED_ON()    (P1OUT &= ~LED_IO)
+#define     LED_OFF()   (P1OUT |= LED_IO)
 
-void USART_Init(void)
-{
-  P3SEL |= 0x30;                            // P3.4,5 = USART0 TXD/RXD
-  ME1 |= UTXE0 + URXE0;                     // Enable USART0 TXD/RXD
-  UCTL0 |= CHAR;                            // 8-bit character
-  UTCTL0 |= SSEL0;                          // UCLK = ACLK
-  UBR00 = 0x03;                             // 32k/9600 - 3.41
-  UBR10 = 0x00;                             //
-  UMCTL0 = 0x4A;                            // Modulation
-  UCTL0 &= ~SWRST;                          // Initialize USART state machine
-   // IE1 |= URXIE0;                            // ???????ж? 
-}
 
-void USART_SendByte(uint8_t ch)
-{
-    TXBUF0 = ch;
-    while (!(IFG1 & UTXIFG0));                // TX???????У?       
-}
-void UART_print(char *string)
-{
-    while (*string) {
-        USART_SendByte(*string++);
-    }
-}
 int main( void )
 {
     WDTCTL = WDTPW + WDTHOLD;               // Stop watchdog timer
-
-    BCSCTL1 &= ~XT2OFF;                 //打开XT2高频晶体振荡器
-    do
-    {
-        IFG1 &= ~OFIFG;                 //清除晶振失败标志
-        for (int i = 0xFF; i > 0; i--);     //等待8MHz晶体起振
+    
+    if (CALBC1_1MHZ==0xFF)					// If calibration constants erased
+    {											
+      while(1);                             // do not load, trap CPU!!	
     }
-    while ((IFG1 & OFIFG));             //晶振失效标志仍然存在？
-    BCSCTL2 |= SELM_2 + SELS;           //MCLK和SMCLK选择高频晶振
+    DCOCTL = 0;                             // Select lowest DCOx and MODx settings
+    BCSCTL1 = CALBC1_1MHZ;
+    DCOCTL = CALDCO_1MHZ;
+    
     P2DIR |= LED_IO;
-	USART_Init();
-    UART_print("uart OK");
+
 	LED_OFF();
-	P1DIR &= ~BIT3; //f149 key
+	P1DIR &= ~KEY_IO; // key
 	
 	InitRF_M(); //init RF
 	while(1)
     {
-
-   		//LED_ON();
-		WriteFIFO();	//write data to TX FIFO
-		StrobeCMD(CMD_TX);
-		delay_us(10);
-		while(GIO1);		//wait transmit completed
-		delay_ms(100);
-		//LED_OFF();
-		//dump_a7339reg();
-
-
+        delay_ms(1000);
+        if (1)//((P1IN & KEY_IO)==0)
+        {
+            for(int i = 0;i<3;i++){
+                LED_ON();
+              WriteFIFO();	//write data to TX FIFO
+              StrobeCMD(CMD_TX);
+                delay_us(10);
+                while(GIO1);		//wait transmit completed
+                delay_ms(100);
+                LED_OFF();
+            }
+        }
 
     }
 }
