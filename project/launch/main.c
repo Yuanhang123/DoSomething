@@ -32,8 +32,8 @@ int main( void )
 	InitRF_M(); //init RF
 	while(1)
     {
-        delay_ms(1000);
-        if (1)//((P1IN & KEY_IO)==0)
+
+        if((P1IN & KEY_IO)==0)
         {
             for(int i = 0;i<3;i++){
                 LED_ON();

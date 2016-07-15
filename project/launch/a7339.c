@@ -393,7 +393,7 @@ void A7339_Cal(void)
 	do{
 		tmp = ReadReg(MODE_REG);
 	}while(tmp & 0x0004);
-	/*
+	
 	//for check(VCO Band)
 	tmp = ReadReg(CALIBRATION_REG);
 	vb = (tmp >>5) & 0x07;
@@ -401,7 +401,7 @@ void A7339_Cal(void)
 	if(vbcf)
 	{
 		Err_State();
-	}*/
+	}
 }
 
 void InitRF_M(void)
