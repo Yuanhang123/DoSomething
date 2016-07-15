@@ -5,6 +5,7 @@
 /*********************************************************************
 **  Global Variable Declaration
 *********************************************************************/
+	/*
 	UINT8		timer;
 	UINT8		TimeoutFlag;
 	UINT16		RxCnt;
@@ -18,7 +19,7 @@
 	UINT16			Config[16];
 	UINT16			Config_PageA[16];
 	UINT16			Config_PageB[5];
-
+*/
 extern void USART_SendByte(UINT8 ch);
 const UINT8 BitCount_Tab[16]={0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4};
 const UINT8  ID_Tab[4]={0xAA,0xAA,0xAA,0xC0};   //ID code
@@ -307,33 +308,25 @@ void A7339_Config(void)
 
 	for(i=0; i<8; i++)
 	{
-  		Config[i] = A7339Config[i];
-		WriteReg(i, Config[i]);
-
+		WriteReg(i, A7339Config[i]);
 	}
 	
 	for(i=10; i<16; i++)
 	{
-		Config[i] = A7339Config[i];
 	  if(i!=11)
-			WriteReg(i, Config[i]); 
-
+			WriteReg(i, A7339Config[i]); 
 	}
 	
 	for(i=0; i<16; i++)
 	{
-		Config_PageA[i] = A7339Config_PageA[i];
 	  if(i!=5)
-			WritePageA(i, Config_PageA[i]);
-
+			WritePageA(i, A7339Config_PageA[i]);
 	}
 	
 	for(i=0; i<3; i++)
 	{
-		Config_PageB[i] = A7339Config_PageB[i];
 	  if(i!=1)
-			WritePageB(i, Config_PageB[i]);
-
+			WritePageB(i, A7339Config_PageB[i]);
 	}
 	
 	//for check        
@@ -378,7 +371,7 @@ void A7339_Cal(void)
 	UINT16 tmp;
 
   //VCO Current calibration procedure @STB state
-	WriteReg(MODE_REG, Config[MODE_REG] | 0x0800);			//VCO Current Calibration
+	WriteReg(MODE_REG, A7339Config[MODE_REG] | 0x0800);			//VCO Current Calibration
   do{
       tmp = ReadReg(MODE_REG);
   }while(tmp & 0x0800);
@@ -394,9 +387,9 @@ void A7339_Cal(void)
   }
 
   //VCO calibration procedure @STB state
-	WriteReg(PLL1_REG, Config[PLL1_REG]);
-	WriteReg(PLL2_REG, Config[PLL2_REG]);
-	WriteReg(MODE_REG, Config[MODE_REG] | 0x0004);		//VCO Band Calibration
+	WriteReg(PLL1_REG, A7339Config[PLL1_REG]);
+	WriteReg(PLL2_REG, A7339Config[PLL2_REG]);
+	WriteReg(MODE_REG, A7339Config[MODE_REG] | 0x0004);		//VCO Band Calibration
 	do{
 		tmp = ReadReg(MODE_REG);
 	}while(tmp & 0x0004);

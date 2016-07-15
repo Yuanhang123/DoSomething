@@ -21,4 +21,15 @@ extern stKEY k1,k2;
 void key_init(void);
 void key_polling(void);
 
+
+#define		KEY_NULL	(0)
+#define		KEY_PREV	(1)
+#define		KEY_NEXT	(2)
+#define		KEY_VOLUME	(KEY_PREV|KEY_NEXT)
+#define		KEY_MATCH	(KEY_NEXT|0x80)
+#define		KEY_CLEAN	(KEY_VOLUME|0x80)
+
+#define		IO_KEY_PREV		(P1IN & K1_IO)
+#define		IO_KEY_NEXT		(P2IN & K2_IO)
+
 #endif

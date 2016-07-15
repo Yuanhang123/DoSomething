@@ -89,34 +89,45 @@ UINT8 match_play(UINT8 *MatchVal,UINT8 *music_index)
 
 void setup_normal()
 {
-
-	if(IsShortKey(k1))
+	UINT8 KeyInfo = KEY_NULL;
+	Key_scan(KeyInfo);
+	switch(KeyInfo)
 	{
-		if(cur_music++ >= MUSIC_MAX)
-			cur_music = 0;
-		//TimerA_UART_print("next music cur_music");
-        work_sta = MATCH;
-	}
-	else if(IsShortKey(k2))
-	{
-		if(cur_music-- <= 1)
+		case KEY_NULL:
+		break;
+		
+		case KEY_PREV:
+			if(cur_music-- <= 1)
 			cur_music = MUSIC_MAX;
 		//TimerA_UART_print("prev music cur_music");
-	}
-
-	else if(IsLongKey(k1))
-	{
-		k1.dKeyRepeat = 0;
-		//TimerA_UART_print("clean mode");
-		work_sta = MATCH;
+		break;
 		
-	}
-	else if(IsLongKey(k2))
-	{
+		case KEY_NEXT:
+			if(cur_music++ >= MUSIC_MAX)
+				cur_music = 0;
+			//TimerA_UART_print("next music cur_music");
+			work_sta = MATCH;
+		break;
+		
+		case KEY_VOLUME:
+
+		break;
+		
+		case KEY_MATCH:
+			k1.dKeyRepeat = 0;
+			//TimerA_UART_print("clean mode");
+			work_sta = MATCH;
+		break;
+		
+		case KEY_CLEAN:
 		k2.dKeyRepeat = 0;
 		//TimerA_UART_print("clean mode");
-		clean_SegC();
+		clean_SegC();		
+		break;
 		
+		default:
+			break;	
+			
 	}
 }
 
@@ -125,7 +136,6 @@ void work_main()
 {
 	//static UINT8 setup_sta = IDLE;
 	UINT8 data_index;
-//	setup_normal();
 	if(match_data(&data_index))
 	{
 		switch (work_sta)
