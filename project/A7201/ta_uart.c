@@ -92,7 +92,7 @@ void main222(void)
 //------------------------------------------------------------------------------
 void TimerA_UART_init(void)
 {
-	P1SEL = UART_TXD + UART_RXD;            // Timer function for TXD/RXD pins
+	P1SEL = UART_RXD;//  UART_TXD +           // Timer function for TXD/RXD pins
     P1DIR = 0xFF & ~UART_RXD;               // Set all pins but RXD to output
 
 
@@ -131,7 +131,7 @@ void TimerA_UART_print(char *string)
 //------------------------------------------------------------------------------
 // Timer_A UART - Transmit Interrupt Handler
 //------------------------------------------------------------------------------
-#pragma vector = TIMER0_A0_VECTOR
+#pragma vector = TIMERA0_VECTOR
 __interrupt void Timer_A0_ISR(void)
 {
     static unsigned char txBitCnt = 10;

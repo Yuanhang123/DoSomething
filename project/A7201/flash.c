@@ -54,18 +54,18 @@ void flash_init(void)
 }
 void clean_SegC()
 {
-	char *Flash_ptr = (char *) 0x1040;			  // Initialize Flash pointer
+	UINT8 *Flash_ptr = (UINT8 *) 0x1040;			  // Initialize Flash pointer
 	FCTL1 = FWKEY + ERASE;					  // Set Erase bit
 	FCTL3 = FWKEY;							  // Clear Lock bit
 	*Flash_ptr = 0; 						  // Dummy write to erase Flash segment
 
 }
-void write_SegC (char * WriteData)
+void write_SegC (UINT8 * WriteData)
 {
-  char *Flash_ptr;                          // Flash pointer
+  UINT8 *Flash_ptr;                          // Flash pointer
   unsigned int i;
 
-  Flash_ptr = (char *) 0x1040;              // Initialize Flash pointer
+  Flash_ptr = (UINT8 *) 0x1040;              // Initialize Flash pointer
   clean_SegC();
 
   FCTL1 = FWKEY + WRT;                      // Set WRT bit for write operation
@@ -78,10 +78,10 @@ void write_SegC (char * WriteData)
   FCTL1 = FWKEY;                            // Clear WRT bit
   FCTL3 = FWKEY + LOCK;                     // Set LOCK bit
 }
-void read_SegC (char * ReadData)
+void read_SegC (UINT8* ReadData)
 {
-    char *Flash_ptrC;
-	Flash_ptrC = (char *) 0x1040;             // Initialize Flash segment C pointer
+    UINT8 *Flash_ptrC;
+	Flash_ptrC = (UINT8 *) 0x1040;             // Initialize Flash segment C pointer
 	for (UINT8 i=0; i<64; i++)
 	{
     	*ReadData++ = *Flash_ptrC++;          // copy value segment C to segment D

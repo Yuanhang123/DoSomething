@@ -3,10 +3,10 @@
 #include "Ta_uart.h"
 #include "common.h"
 
-#define		SPI_CLK_IO		BIT6
-#define		SPI_DATA_IO		BIT5	
-#define		SPI_CE_IO		BIT1	//p1.7
-#define		SPI_STB_IO		BIT4 	//p2.7
+#define		SPI_CLK_IO		BIT7
+#define		SPI_DATA_IO		BIT4	
+#define		SPI_CE_IO		BIT5	//p1.7
+#define		SPI_STB_IO		BIT6 	//p2.7
 #define		SPI_S_IO		BIT0 	//p2.6
 
 #define		RX_DATA_IO		BIT2
@@ -18,14 +18,14 @@
 #define		SPI_DATA_L()		(P1OUT &= ~SPI_DATA_IO)
 #define		SPI_DATA_H()		(P1OUT |= SPI_DATA_IO)
 
-#define		SPI_CE_L()			(P2OUT &= ~SPI_CE_IO)
-#define		SPI_CE_H()			(P2OUT |= SPI_CE_IO)
+#define		SPI_CE_L()			(P1OUT &= ~SPI_CE_IO)
+#define		SPI_CE_H()			(P1OUT |= SPI_CE_IO)
 
 #define		SPI_STB_L()			(P1OUT &= ~SPI_STB_IO)
 #define		SPI_STB_H()			(P1OUT |= SPI_STB_IO)
 
-#define		SPI_S_L()			(P2OUT &= ~SPI_S_IO)
-#define		SPI_S_H()			(P2OUT |= SPI_S_IO)
+#define		SPI_S_L()			(P1OUT &= ~SPI_S_IO)
+#define		SPI_S_H()			(P1OUT |= SPI_S_IO)
 
 #define		SPI_delay(t)		//delay_us(t)
 
@@ -150,7 +150,7 @@ void A7201_init(void)
 	SPI_IO_Init();
     SPI_CE_L();	//pCE = 0;
     			//pTX_RX = 0;
-   	SPI_S_H(); //pSPIS = 1;           // SPI mode
+   	//SPI_S_H(); //pSPIS = 1;           // SPI mode
     SPI_STB_L();
     SPI_CLK_L();
 
@@ -185,8 +185,17 @@ void A7201_init(void)
 /* _______    __     __     __   		*/
 /*             \_/  \__/  \__/    __  __------*/
 /**/
-#pragma vector = TIMER0_A1_VECTOR
+//------------------------------------------------------------------------------
+// Timer_A UART - Receive Interrupt Handler
+//------------------------------------------------------------------------------
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector = TIMERA1_VECTOR
 __interrupt void Timer_A1_ISR(void)
+#elif defined(__GNUC__)
+void __attribute__ ((interrupt(TIMERA1_VECTOR))) Timer_A1_ISR (void)
+#else
+#error Compiler not supported!
+#endif
 {
     static UINT8 bRxBitCnt = 8;
     static UINT8 bRxData = 0;
@@ -194,8 +203,8 @@ __interrupt void Timer_A1_ISR(void)
    	static UINT16 PreambleBit = SCCI;
    static RxDataStatus eRxsta = eIDLE;
    P2OUT |= BIT2;
-    switch (__even_in_range(TA0IV, TA0IV_TAIFG)) { // Use calculated branching
-        case TA0IV_TACCR1:                        // TACCR1 CCIFG - UART RX
+    switch (__even_in_range(TAIV, TAIV_TAIFG)) { // Use calculated branching
+        case TAIV_TACCR1:                        // TACCR1 CCIFG - UART RX
             
             TACCR1 += UART_TBIT;                 // Add Offset to CCRx
             

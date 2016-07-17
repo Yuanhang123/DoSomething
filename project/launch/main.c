@@ -23,18 +23,26 @@ int main( void )
     DCOCTL = 0;                             // Select lowest DCOx and MODx settings
     BCSCTL1 = CALBC1_1MHZ;
     DCOCTL = CALDCO_1MHZ;
-    
+    P1DIR = 0xff;
+    P2DIR = 0xff;
+    P1DIR = 0xff;
+    P2DIR = 0xff;
+    /****/
+      P1IE |= 0x20;                             // P1.4 interrupt enabled
+  P1IES |= 0x20;                            // P1.4 Hi/lo edge
+  P1IFG &= ~0x20;                           // P1.4 IFG cleared
+        /***/
     P2DIR |= LED_IO;
-
 	LED_OFF();
 	P1DIR &= ~KEY_IO; // key
 	
 	InitRF_M(); //init RF
+    StrobeCMD(CMD_DEEP_SLEEP);
 	while(1)
     {
-
+        __bis_SR_register(LPM4_bits + GIE);     // Enter LPM3
         if((P1IN & KEY_IO)==0)
-        {
+        {   InitRF_M(); //init RF
             for(int i = 0;i<3;i++){
                 LED_ON();
               WriteFIFO();	//write data to TX FIFO
@@ -45,6 +53,8 @@ int main( void )
                 LED_OFF();
             }
         }
+        StrobeCMD(CMD_DEEP_SLEEP);
+        delay_ms(1);
 
     }
 }
@@ -59,10 +69,6 @@ void __attribute__ ((interrupt(PORT1_VECTOR))) Port_1 (void)
 #error Compiler not supported!
 #endif
 {
-    if(P1IFG & KEY_IO)
-    {
-        P1IFG &= ~KEY_IO;                           // IFG cleared
-        LED_ON();
-        __bic_SR_register_on_exit(LPM1_bits);   // Clear LPM4 bits from 0(SR)
-    }
+  P1IFG &= ~0x20;                           // P1.4 IFG cleared
+  __bic_SR_register_on_exit(LPM4_bits);     // Clear LPM3 bits from 0(SR)
 }

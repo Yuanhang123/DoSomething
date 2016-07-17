@@ -69,7 +69,7 @@ void key_test()
 	{
 		UINT8 KeyInfo = KEY_NULL;
 		delay_ms(10);
-		Key_scan(KeyInfo);
+		Key_scan(&KeyInfo);
 
 		switch(KeyInfo)
 		{

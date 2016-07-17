@@ -39,12 +39,13 @@ int main( void )
 
 	A7201_init();
 	ReceiveData();
-    P1DIR |= LED_IO;
+    P2DIR |= LED_IO;
     P2DIR |= BIT2;
+    P1DIR |= BIT1;
+    P1OUT &= ~BIT1;
     while(1)
     {
 		//LED_ON();
-		key_polling();
 		setup_normal();
     	work_main();
 	 	delay_ms(10);

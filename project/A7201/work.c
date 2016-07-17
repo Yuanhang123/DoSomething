@@ -1,6 +1,6 @@
 #include "work.h"
 
-eWorkStatus work_sta = NORMAL;
+eWorkStatus work_sta = MATCH;
 UINT8 cur_music = 1;
 
 UINT8 RxCMD[4] ={0};
@@ -90,7 +90,7 @@ UINT8 match_play(UINT8 *MatchVal,UINT8 *music_index)
 void setup_normal()
 {
 	UINT8 KeyInfo = KEY_NULL;
-	Key_scan(KeyInfo);
+	Key_scan(&KeyInfo);
 	switch(KeyInfo)
 	{
 		case KEY_NULL:
@@ -99,6 +99,7 @@ void setup_normal()
 		case KEY_PREV:
 			if(cur_music-- <= 1)
 			cur_music = MUSIC_MAX;
+            work_sta = MATCH;
 		//TimerA_UART_print("prev music cur_music");
 		break;
 		
@@ -106,7 +107,7 @@ void setup_normal()
 			if(cur_music++ >= MUSIC_MAX)
 				cur_music = 0;
 			//TimerA_UART_print("next music cur_music");
-			work_sta = MATCH;
+			
 		break;
 		
 		case KEY_VOLUME:
@@ -114,13 +115,11 @@ void setup_normal()
 		break;
 		
 		case KEY_MATCH:
-			k1.dKeyRepeat = 0;
 			//TimerA_UART_print("clean mode");
 			work_sta = MATCH;
 		break;
 		
 		case KEY_CLEAN:
-		k2.dKeyRepeat = 0;
 		//TimerA_UART_print("clean mode");
 		clean_SegC();		
 		break;
@@ -146,6 +145,12 @@ void work_main()
                     {
 						//TimerA_UART_tx(data_index);
                         LED_ON();
+
+                       P1OUT &= ~BIT1;
+                        delay_ms(100);
+                          P1OUT |= BIT1;
+                         break;
+                         
                     }
 				}
 				break;

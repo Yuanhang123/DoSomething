@@ -235,7 +235,7 @@ void WritePageA(UINT8 address, UINT16 dataWord)
     UINT16 tmp;
 
     tmp = address;
-    tmp = ((tmp << 12) | Config[CRYSTAL_REG]);
+    tmp = ((tmp << 12) | A7339Config[CRYSTAL_REG]);
     WriteReg(CRYSTAL_REG, tmp);
     WriteReg(PAGEA_REG, dataWord);
 }
@@ -248,7 +248,7 @@ UINT16 ReadPageA(UINT8 address)
     UINT16 tmp;
 
     tmp = address;
-    tmp = ((tmp << 12) | Config[CRYSTAL_REG]);
+    tmp = ((tmp << 12) | A7339Config[CRYSTAL_REG]);
     WriteReg(CRYSTAL_REG, tmp);
     tmp = ReadReg(PAGEA_REG);
     return tmp;
@@ -262,7 +262,7 @@ void WritePageB(UINT8 address, UINT16 dataWord)
     UINT16 tmp;
 
     tmp = address;
-    tmp = ((tmp << 7) | Config[CRYSTAL_REG]);
+    tmp = ((tmp << 7) | A7339Config[CRYSTAL_REG]);
     WriteReg(CRYSTAL_REG, tmp);
     WriteReg(PAGEB_REG, dataWord);
 }
@@ -275,7 +275,7 @@ UINT16 ReadPageB(UINT8 address)
     UINT16 tmp;
 
     tmp = address;
-    tmp = ((tmp << 7) | Config[CRYSTAL_REG]);
+    tmp = ((tmp << 7) | A7339Config[CRYSTAL_REG]);
     WriteReg(CRYSTAL_REG, tmp);
     tmp = ReadReg(PAGEB_REG);
     return tmp;
